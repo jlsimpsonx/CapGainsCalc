@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capital Gains Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .calculator {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        button {
+            background-color: #00392C;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-label {
+            font-weight: 500;
+            color: #34495e;
+        }
+        .error {
+            color: #e74c3c;
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .section-divider {
+            border-top: 2px solid #eee;
+            margin: 20px 0;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Capital Gains Calculator</h1>
+        
+        <div class="input-group">
+            <label for="costPerShare">Cost Per Share ($)</label>
+            <input type="number" id="costPerShare" step="1" min="0" placeholder="Enter cost per share">
+        </div>
+        
+        <div class="input-group">
+            <label for="currentValue">Current Market Value Per Share ($)</label>
+            <input type="number" id="currentValue" step="1" min="0" placeholder="Enter current market value">
+        </div>
+        
+        <div class="input-group">
+            <label for="sellValue">Total Sell Value ($)</label>
+            <input type="number" id="sellValue" step="1" min="0" placeholder="Enter total sell value">
+        </div>
+        
+        <button onclick="calculateGains()">Calculate Capital Gains</button>
+        
+        <div id="error" class="error">Please fill in all fields with valid numbers.</div>
+        
+        <div id="results" class="results">
+            <div class="result-item">
+                <span class="result-label">Number of Shares:</span>
+                <span id="numShares">0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Cost Basis:</span>
+                <span id="costBasis">$0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Realized Capital Gain:</span>
+                <span id="realizedGain">$0</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="result-item">
+                <span class="result-label">Taxable Capital Gain (50%):</span>
+                <span id="taxableGain">$0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Taxable Capital Gain >$250k (66.67%):</span>
+                <span id="highTaxableGain">$0</span>
+            </div>
+            <div class="section-divider"></div>
+            <div class="result-item">
+                <span class="result-label">Tax Payable (20%):</span>
+                <span id="taxPayable20">$0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Tax Payable (30%):</span>
+                <span id="taxPayable30">$0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Tax Payable (40%):</span>
+                <span id="taxPayable40">$0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Tax Payable (50%):</span>
+                <span id="taxPayable50">$0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateGains() {
+            // Get input values
+            const costPerShare = parseFloat(document.getElementById('costPerShare').value);
+            const currentValue = parseFloat(document.getElementById('currentValue').value);
+            const sellValue = parseFloat(document.getElementById('sellValue').value);
+            
+            // Validate required inputs
+            if (isNaN(costPerShare) || isNaN(currentValue) || isNaN(sellValue) || 
+                costPerShare <= 0 || currentValue <= 0 || sellValue <= 0) {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('results').style.display = 'none';
+                return;
+            }
+            
+            // Hide error message
+            document.getElementById('error').style.display = 'none';
+            
+            // Calculate number of shares
+            const numShares = Math.round(sellValue / currentValue);
+            
+            // Calculate total cost basis
+            const costBasis = Math.round(numShares * costPerShare);
+            
+            // Calculate realized capital gain
+            const realizedGain = Math.round(sellValue - costBasis);
+            
+            // Calculate taxable capital gains
+            let taxableGain = 0;
+            let highTaxableGain = 0;
+            
+            if (realizedGain <= 250000) {
+                taxableGain = Math.round(realizedGain * 0.5);
+                highTaxableGain = 0;
+            } else {
+                taxableGain = Math.round(250000 * 0.5);
+                highTaxableGain = Math.round((realizedGain - 250000) * 0.6667);
+            }
+
+            // Calculate total taxable amount for personal tax rates
+            const totalTaxableAmount = taxableGain + highTaxableGain;
+
+            // Calculate tax payable at different rates
+            const taxPayable20 = Math.round(totalTaxableAmount * 0.20);
+            const taxPayable30 = Math.round(totalTaxableAmount * 0.30);
+            const taxPayable40 = Math.round(totalTaxableAmount * 0.40);
+            const taxPayable50 = Math.round(totalTaxableAmount * 0.50);
+            
+            // Display results
+            document.getElementById('numShares').textContent = numShares.toLocaleString();
+            document.getElementById('costBasis').textContent = `$${costBasis.toLocaleString()}`;
+            document.getElementById('realizedGain').textContent = `$${realizedGain.toLocaleString()}`;
+            document.getElementById('taxableGain').textContent = `$${taxableGain.toLocaleString()}`;
+            document.getElementById('highTaxableGain').textContent = `$${highTaxableGain.toLocaleString()}`;
+            document.getElementById('taxPayable20').textContent = `$${taxPayable20.toLocaleString()}`;
+            document.getElementById('taxPayable30').textContent = `$${taxPayable30.toLocaleString()}`;
+            document.getElementById('taxPayable40').textContent = `$${taxPayable40.toLocaleString()}`;
+            document.getElementById('taxPayable50').textContent = `$${taxPayable50.toLocaleString()}`;
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
