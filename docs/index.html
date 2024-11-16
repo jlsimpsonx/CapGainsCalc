@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Previous head content remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Capital Gains Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Previous styles remain the same */
+        /* All previous styles remain exactly the same */
         body {
             font-family: 'Poppins', sans-serif;
             max-width: 800px;
@@ -123,17 +124,17 @@
         
         <div class="input-group">
             <label for="costPerShare">Cost Per Share ($)</label>
-            <input type="number" id="costPerShare" step="1" min="0" placeholder="Enter cost per share">
+            <input type="text" id="costPerShare" placeholder="Enter cost per share">
         </div>
         
         <div class="input-group">
             <label for="currentValue">Current Market Value Per Share ($)</label>
-            <input type="number" id="currentValue" step="1" min="0" placeholder="Enter current market value">
+            <input type="text" id="currentValue" placeholder="Enter current market value">
         </div>
         
         <div class="input-group">
             <label for="sellValue">Amount Sold ($)</label>
-            <input type="number" id="sellValue" step="1" min="0" placeholder="Enter total sell value">
+            <input type="text" id="sellValue" placeholder="Enter total sell value">
         </div>
         
         <button onclick="calculateGains()">Calculate Capital Gains</button>
@@ -141,6 +142,7 @@
         <div id="error" class="error">Please fill in all fields with valid numbers.</div>
         
         <div id="results" class="results">
+            <!-- Previous table structure remains the same -->
             <table class="results-table">
                 <thead>
                     <tr>
@@ -177,7 +179,7 @@
             </table>
 
             <div class="section-divider"></div>
-            <div class="section-title">Tax Estimator (at various MTR)</div>
+            <div class="section-title">Tax Estimator at various MTR</div>
             <table class="results-table">
                 <tbody>
                     <tr>
@@ -202,11 +204,55 @@
     </div>
 
     <script>
+        // Function to parse number string with commas
+        function parseNumberWithCommas(str) {
+            // Remove all commas and spaces, then parse as float
+            return parseFloat(str.replace(/,/g, '').replace(/\s/g, ''));
+        }
+
+        // Function to format inputs as they're typed
+        function formatNumberInput(input) {
+            input.addEventListener('input', function(e) {
+                // Get the cursor position
+                let cursorPos = e.target.selectionStart;
+                let oldLength = e.target.value.length;
+                
+                // Remove any character that isn't a number, comma, or decimal point
+                let value = e.target.value.replace(/[^\d,.]/, '');
+                
+                // Handle decimal points (allow only one)
+                let decimalPoints = value.match(/\./g);
+                if (decimalPoints && decimalPoints.length > 1) {
+                    value = value.substring(0, value.lastIndexOf('.'));
+                }
+                
+                // Remove commas and format number
+                let number = value.replace(/,/g, '');
+                if (number) {
+                    // Add commas for thousands
+                    number = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    e.target.value = number;
+                    
+                    // Adjust cursor position based on whether we added or removed characters
+                    let newLength = e.target.value.length;
+                    cursorPos += (newLength - oldLength);
+                    e.target.setSelectionRange(cursorPos, cursorPos);
+                }
+            });
+        }
+
+        // Initialize format listeners for all input fields
+        document.addEventListener('DOMContentLoaded', function() {
+            formatNumberInput(document.getElementById('costPerShare'));
+            formatNumberInput(document.getElementById('currentValue'));
+            formatNumberInput(document.getElementById('sellValue'));
+        });
+
         function calculateGains() {
-            // Get input values
-            const costPerShare = parseFloat(document.getElementById('costPerShare').value);
-            const currentValue = parseFloat(document.getElementById('currentValue').value);
-            const sellValue = parseFloat(document.getElementById('sellValue').value);
+            // Get input values and parse them, accounting for commas
+            const costPerShare = parseNumberWithCommas(document.getElementById('costPerShare').value);
+            const currentValue = parseNumberWithCommas(document.getElementById('currentValue').value);
+            const sellValue = parseNumberWithCommas(document.getElementById('sellValue').value);
             
             // Validate required inputs
             if (isNaN(costPerShare) || isNaN(currentValue) || isNaN(sellValue) || 
