@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Previous head content remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Capital Gains Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* All previous styles remain exactly the same */
+        /* Previous styles remain the same */
         body {
             font-family: 'Poppins', sans-serif;
             max-width: 800px;
@@ -56,6 +55,15 @@
         }
         button:hover {
             opacity: 0.9;
+        }
+        .copy-button {
+            width: auto;
+            margin: 20px auto;
+            display: block;
+            background-color: #2c3e50;
+        }
+        .copy-button:active {
+            background-color: #1a252f;
         }
         .results {
             margin-top: 30px;
@@ -116,6 +124,13 @@
         .footer-text a:hover {
             text-decoration: underline;
         }
+        .copy-feedback {
+            display: none;
+            color: #27ae60;
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +157,6 @@
         <div id="error" class="error">Please fill in all fields with valid numbers.</div>
         
         <div id="results" class="results">
-            <!-- Previous table structure remains the same -->
             <table class="results-table">
                 <tbody>
                     <tr class="highlight-row">
@@ -172,6 +186,9 @@
                 </tbody>
             </table>
 
+            <button onclick="copyResults()" class="copy-button">Copy Key Results</button>
+            <div id="copyFeedback" class="copy-feedback">Results copied to clipboard!</div>
+
             <div class="section-divider"></div>
             <div class="section-title">Tax Estimator at various MTR</div>
             <table class="results-table">
@@ -198,36 +215,24 @@
     </div>
 
     <script>
-        // Function to parse number string with commas
+        // Previous JavaScript functions remain the same
         function parseNumberWithCommas(str) {
-            // Remove all commas and spaces, then parse as float
             return parseFloat(str.replace(/,/g, '').replace(/\s/g, ''));
         }
 
-        // Function to format inputs as they're typed
         function formatNumberInput(input) {
             input.addEventListener('input', function(e) {
-                // Get the cursor position
                 let cursorPos = e.target.selectionStart;
                 let oldLength = e.target.value.length;
-                
-                // Remove any character that isn't a number, comma, or decimal point
                 let value = e.target.value.replace(/[^\d,.]/, '');
-                
-                // Handle decimal points (allow only one)
                 let decimalPoints = value.match(/\./g);
                 if (decimalPoints && decimalPoints.length > 1) {
                     value = value.substring(0, value.lastIndexOf('.'));
                 }
-                
-                // Remove commas and format number
                 let number = value.replace(/,/g, '');
                 if (number) {
-                    // Add commas for thousands
                     number = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                     e.target.value = number;
-                    
-                    // Adjust cursor position based on whether we added or removed characters
                     let newLength = e.target.value.length;
                     cursorPos += (newLength - oldLength);
                     e.target.setSelectionRange(cursorPos, cursorPos);
@@ -235,7 +240,6 @@
             });
         }
 
-        // Initialize format listeners for all input fields
         document.addEventListener('DOMContentLoaded', function() {
             formatNumberInput(document.getElementById('costPerShare'));
             formatNumberInput(document.getElementById('currentValue'));
@@ -243,12 +247,10 @@
         });
 
         function calculateGains() {
-            // Get input values and parse them, accounting for commas
             const costPerShare = parseNumberWithCommas(document.getElementById('costPerShare').value);
             const currentValue = parseNumberWithCommas(document.getElementById('currentValue').value);
             const sellValue = parseNumberWithCommas(document.getElementById('sellValue').value);
             
-            // Validate required inputs
             if (isNaN(costPerShare) || isNaN(currentValue) || isNaN(sellValue) || 
                 costPerShare <= 0 || currentValue <= 0 || sellValue <= 0) {
                 document.getElementById('error').style.display = 'block';
@@ -256,19 +258,12 @@
                 return;
             }
             
-            // Hide error message
             document.getElementById('error').style.display = 'none';
             
-            // Calculate number of shares
             const numShares = Math.round(sellValue / currentValue);
-            
-            // Calculate total cost basis
             const costBasis = Math.round(numShares * costPerShare);
-            
-            // Calculate realized capital gain
             const realizedGain = Math.round(sellValue - costBasis);
             
-            // Calculate taxable capital gains
             let taxableGain = 0;
             let highTaxableGain = 0;
             
@@ -280,16 +275,13 @@
                 highTaxableGain = Math.round((realizedGain - 250000) * 0.6667);
             }
 
-            // Calculate total taxable gain
             const totalTaxableGain = taxableGain + highTaxableGain;
 
-            // Calculate tax payable at different rates
             const taxPayable20 = Math.round(totalTaxableGain * 0.20);
             const taxPayable30 = Math.round(totalTaxableGain * 0.30);
             const taxPayable40 = Math.round(totalTaxableGain * 0.40);
             const taxPayable50 = Math.round(totalTaxableGain * 0.50);
             
-            // Display results
             document.getElementById('numShares').textContent = numShares.toLocaleString();
             document.getElementById('costBasis').textContent = `$${costBasis.toLocaleString()}`;
             document.getElementById('realizedGain').textContent = `$${realizedGain.toLocaleString()}`;
@@ -301,8 +293,25 @@
             document.getElementById('taxPayable40').textContent = `$${taxPayable40.toLocaleString()}`;
             document.getElementById('taxPayable50').textContent = `$${taxPayable50.toLocaleString()}`;
             
-            // Show results
             document.getElementById('results').style.display = 'block';
+        }
+
+        // New function to copy results to clipboard
+        function copyResults() {
+            const numShares = document.getElementById('numShares').textContent;
+            const sellValue = document.getElementById('sellValue').value;
+            const realizedGain = document.getElementById('realizedGain').textContent;
+            const totalTaxableGain = document.getElementById('totalTaxableGain').textContent;
+
+            const resultText = `By selling ${numShares} shares you will receive $${sellValue}. This will realize a gain of ${realizedGain}, of which ${totalTaxableGain} is taxable as income next year.`;
+
+            navigator.clipboard.writeText(resultText).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 2000);
+            });
         }
     </script>
     <div class="footer-text">
