@@ -6,7 +6,6 @@
     <title>Capital Gains Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Previous styles remain the same */
         body {
             font-family: 'Poppins', sans-serif;
             max-width: 800px;
@@ -159,10 +158,6 @@
         <div id="results" class="results">
             <table class="results-table">
                 <tbody>
-                    <tr class="highlight-row">
-                        <td>Total Taxable Gain</td>
-                        <td id="totalTaxableGain">$0</td>
-                    </tr>
                     <tr>
                         <td>Number of Shares</td>
                         <td id="numShares">0</td>
@@ -174,6 +169,10 @@
                     <tr>
                         <td>Realized Gain</td>
                         <td id="realizedGain">$0</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Total Taxable Gain</td>
+                        <td id="totalTaxableGain">$0</td>
                     </tr>
                     <tr>
                         <td>Taxable Gain <$250k</td>
@@ -215,7 +214,6 @@
     </div>
 
     <script>
-        // Previous JavaScript functions remain the same
         function parseNumberWithCommas(str) {
             return parseFloat(str.replace(/,/g, '').replace(/\s/g, ''));
         }
@@ -296,35 +294,31 @@
             document.getElementById('results').style.display = 'block';
         }
 
-function copyResults() {
-    // Get all the values
-    const totalTaxableGain = document.getElementById('totalTaxableGain').textContent;
-    const numShares = document.getElementById('numShares').textContent;
-    const costBasis = document.getElementById('costBasis').textContent;
-    const realizedGain = document.getElementById('realizedGain').textContent;
-    const taxableGain = document.getElementById('taxableGain').textContent;
-    const highTaxableGain = document.getElementById('highTaxableGain').textContent;
+        function copyResults() {
+            // Get only the requested values
+            const numShares = document.getElementById('numShares').textContent;
+            const costBasis = document.getElementById('costBasis').textContent;
+            const realizedGain = document.getElementById('realizedGain').textContent;
+            const totalTaxableGain = document.getElementById('totalTaxableGain').textContent;
 
-    // Create a formatted table using spaces and line breaks
-    const resultText = 
+            // Create a formatted table using spaces and line breaks
+            const resultText = 
 `Capital Gains Summary:
 --------------------------------
-Total Taxable Gain: ${totalTaxableGain}
 Number of Shares:   ${numShares}
 Total Cost Basis:   ${costBasis}
 Realized Gain:      ${realizedGain}
-Taxable Gain <250k: ${taxableGain}
-Taxable Gain >250k: ${highTaxableGain}
+Total Taxable Gain: ${totalTaxableGain}
 --------------------------------`;
 
-    navigator.clipboard.writeText(resultText).then(() => {
-        const feedback = document.getElementById('copyFeedback');
-        feedback.style.display = 'block';
-        setTimeout(() => {
-            feedback.style.display = 'none';
-        }, 2000);
-    });
-}
+            navigator.clipboard.writeText(resultText).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.style.display = 'block';
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                }, 2000);
+            });
+        }
     </script>
     <div class="footer-text">
         Created November 9, 2024 by Jason Simpson CFP CIM web: <a href="https://www.trailwaywealth.ca" target="_blank">www.trailwaywealth.ca</a> IG: <a href="https://www.instagram.com/trailwaywealth/" target="_blank">@trailwaywealth</a>. For illustrative purposes only. Consult your advisor and/or accountant before making important financial decisions.
