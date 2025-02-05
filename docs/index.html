@@ -137,17 +137,17 @@
         <h1>Capital Gains Calculator</h1>
         
         <div class="input-group">
-            <label for="costPerShare">Cost Per Share ($)</label>
+            <label for="costPerShare">Cost/ACB ($)</label>
             <input type="text" id="costPerShare" placeholder="Enter cost per share">
         </div>
         
         <div class="input-group">
-            <label for="currentValue">Market Value Per Share ($)</label>
+            <label for="currentValue">Market Value/Price Per Share ($)</label>
             <input type="text" id="currentValue" placeholder="Enter current market value">
         </div>
         
         <div class="input-group">
-            <label for="sellValue">Amount to Sell ($)</label>
+            <label for="sellValue">Amount Being Sold ($)</label>
             <input type="text" id="sellValue" placeholder="Enter total sell value">
         </div>
         
@@ -187,29 +187,6 @@
 
             <button onclick="copyResults()" class="copy-button">Copy Key Results</button>
             <div id="copyFeedback" class="copy-feedback">Results copied to clipboard!</div>
-
-            <div class="section-divider"></div>
-            <div class="section-title">Tax Estimator at various MTR</div>
-            <table class="results-table">
-                <tbody>
-                    <tr>
-                        <td>20%</td>
-                        <td id="taxPayable20">$0</td>
-                    </tr>
-                    <tr>
-                        <td>30%</td>
-                        <td id="taxPayable30">$0</td>
-                    </tr>
-                    <tr>
-                        <td>40%</td>
-                        <td id="taxPayable40">$0</td>
-                    </tr>
-                    <tr>
-                        <td>50%</td>
-                        <td id="taxPayable50">$0</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
@@ -274,11 +251,6 @@
             }
 
             const totalTaxableGain = taxableGain + highTaxableGain;
-
-            const taxPayable20 = Math.round(totalTaxableGain * 0.20);
-            const taxPayable30 = Math.round(totalTaxableGain * 0.30);
-            const taxPayable40 = Math.round(totalTaxableGain * 0.40);
-            const taxPayable50 = Math.round(totalTaxableGain * 0.50);
             
             document.getElementById('numShares').textContent = numShares.toLocaleString();
             document.getElementById('costBasis').textContent = `$${costBasis.toLocaleString()}`;
@@ -286,22 +258,16 @@
             document.getElementById('taxableGain').textContent = `$${taxableGain.toLocaleString()}`;
             document.getElementById('highTaxableGain').textContent = `$${highTaxableGain.toLocaleString()}`;
             document.getElementById('totalTaxableGain').textContent = `$${totalTaxableGain.toLocaleString()}`;
-            document.getElementById('taxPayable20').textContent = `$${taxPayable20.toLocaleString()}`;
-            document.getElementById('taxPayable30').textContent = `$${taxPayable30.toLocaleString()}`;
-            document.getElementById('taxPayable40').textContent = `$${taxPayable40.toLocaleString()}`;
-            document.getElementById('taxPayable50').textContent = `$${taxPayable50.toLocaleString()}`;
             
             document.getElementById('results').style.display = 'block';
         }
 
         function copyResults() {
-            // Get only the requested values
             const numShares = document.getElementById('numShares').textContent;
             const costBasis = document.getElementById('costBasis').textContent;
             const realizedGain = document.getElementById('realizedGain').textContent;
             const totalTaxableGain = document.getElementById('totalTaxableGain').textContent;
 
-            // Create a formatted table using spaces and line breaks
             const resultText = 
 `Capital Gains Summary:
 --------------------------------
